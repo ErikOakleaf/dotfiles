@@ -1,7 +1,9 @@
 [init]
-    defaultBranch = main
+	defaultBranch = main
 
 
 [user]
     email = oakl33f123@gmail.com
     name = Erik Ekblad
+[fetch]
+	prune = true
