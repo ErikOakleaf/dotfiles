@@ -2,10 +2,12 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
-vim.g.mapleader = " "
-vim.o.number = true;
+vim.opt.number = true
+vim.opt.relativenumber = true
 
 -- keymaps
+
+vim.g.mapleader = " "
 
 vim.api.nvim_set_keymap('i', '<C-v>', '<C-r>+', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', '<C-z>', '<C-o>u', { noremap = true, silent = true })
