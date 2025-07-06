@@ -43,3 +43,5 @@
 # resize-overlay-duration = 4s 200ms
 
 theme = catppuccin-mocha
+background-opacity = 0.82
+font-size = 15
