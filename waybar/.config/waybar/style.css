@@ -1,0 +1,73 @@
+window#waybar {
+  border: 0px solid rgba(0, 0, 0, 0);
+  background-color: rgba(50, 50, 50, 0);
+}
+
+#waybar .module {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+}
+
+#waybar .module .icon {
+  margin-right: 0.4em;
+}
+
+/* Group 1: Workspaces */
+#workspaces {
+  border: 1px solid rgba(50, 50, 50, 0.3);
+  border-radius: 8px;
+}
+
+#workspaces button {
+  color: white;
+}
+
+/* Group 2: Network + Volume + Battery */
+#battery {
+  border: 1px solid rgba(50, 50, 50, 0.3);
+  border-right: none;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  margin-left: 6px;
+  padding: 0 5px;
+}
+
+#network {
+  border-top: 1px solid rgba(50, 50, 50, 0.3);
+  border-bottom: 1px solid rgba(50, 50, 50, 0.3);
+  border-right: none;
+  padding: 0 5px;
+}
+
+#pulseaudio {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border: 1px solid rgba(50, 50, 50, 0.3);
+  border-left: none;
+  margin-right: 6px;
+  padding: 0 5px;
+}
+
+/* Group 3: CPU + Memory */
+#cpu {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border: 1px solid rgba(50, 50, 50, 0.3);
+  border-right: none;
+  padding: 0 5px;
+}
+
+#memory {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border: 1px solid rgba(50, 50, 50, 0.3);
+  border-left: none;
+  padding: 0 5px;
+}
+
+/* Group 4: Clock alone */
+#clock {
+  border: 1px solid rgba(50, 50, 50, 0.3);
+  border-radius: 8px;
+  padding: 0 10px;
+}
