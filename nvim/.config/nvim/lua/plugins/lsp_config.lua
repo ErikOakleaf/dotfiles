@@ -48,7 +48,7 @@ return {
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
             local lspconfig = require("lspconfig")
             lspconfig.clangd.setup({
-                capabilities = capabilities
+                capabilities = capabilities,
             })
             lspconfig.zls.setup({
                 capabilities = capabilities
@@ -68,13 +68,13 @@ return {
             lspconfig.lua_ls.setup({
                 capabilites = capabilites
             })
-            
+
 
             -- keymaps
             vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
             vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
             vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
+            vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
         end,
     },
 }
