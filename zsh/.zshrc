@@ -41,3 +41,13 @@ alias ls='ls --color'
 
 # Shell integrations
 eval "$(zoxide init --cmd cd zsh)"
+eval "$(fzf --zsh)"
+
+
+# --- FZF Keybinding Customization ---
+# unbind defaults
+bindkey -r '^R'
+bindkey -r '^T'
+
+bindkey '^R' fzf-file-widget
+bindkey '^T' fzf-history-widget
