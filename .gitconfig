@@ -7,3 +7,5 @@
     name = Erik Ekblad
 [fetch]
 	prune = true
+[core]
+	editor = nvim

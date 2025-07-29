@@ -43,6 +43,17 @@ return {
         end,
     },
     {
+        "jay-babu/mason-nvim-dap.nvim",
+        config = function()
+            require("mason-nvim-dap").setup({
+                ensure_installed = {
+                    "codelldb", -- C/C++/Rust
+                },
+                automatic_setup = true,
+            })
+        end,
+    },
+    {
         "neovim/nvim-lspconfig",
         config = function()
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
