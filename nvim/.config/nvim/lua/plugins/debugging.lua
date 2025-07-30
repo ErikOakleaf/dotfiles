@@ -52,8 +52,11 @@ return {
         vim.api.nvim_set_hl(0, 'DapBreakpoint', { fg = '#ffffff' })  -- White
 
         -- keymaps
+        vim.keymap.set('n', '<Leader>dt', function() dapui.toggle() end)
         vim.keymap.set('n', '<Leader>db', function() dap.toggle_breakpoint() end)
         vim.keymap.set('n', '<Leader>dc', function() dap.continue() end)
+        vim.keymap.set('n', '<Leader>dC', function() dap.run_last() end)
+        vim.keymap.set('n', '<Leader>ds', function() dap.terminate() end)
         vim.keymap.set('n', '<leader>do', function() dap.step_over() end)
         vim.keymap.set('n', '<leader>dO', function() dap.step_out() end)
         vim.keymap.set('n', '<Leader>di', function() dap.step_into() end)
