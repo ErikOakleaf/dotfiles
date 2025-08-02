@@ -21,4 +21,5 @@ vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set('n', '<Esc>', ':noh<CR><Esc>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-o>', '<C-r>', { noremap = true, silent = true })
+vim.keymap.set('n', 'gb', '<C-o>', { noremap = true, silent = true })
 
