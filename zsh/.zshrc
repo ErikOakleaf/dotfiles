@@ -51,3 +51,36 @@ bindkey -r '^T'
 
 bindkey '^R' fzf-file-widget
 bindkey '^T' fzf-history-widget
+
+# Cursor shape for different vi modes for tmux
+if [[ -n $TMUX ]]; then
+    # In tmux
+    zle-keymap-select() {
+        if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+            printf '\033[1 q'  # block cursor
+        elif [[ ${KEYMAP} == main ]] || [[ ${KEYMAP} == viins ]] || [[ ${KEYMAP} = '' ]] || [[ $1 = 'beam' ]]; then
+            printf '\033[5 q'  # beam cursor
+        fi
+    }
+    zle -N zle-keymap-select
+    
+    # Initialize cursor on startup
+    printf '\033[5 q'
+    
+    # Reset cursor on exit
+    trap 'printf "\033[1 q"' EXIT
+fi
+
+# Reset cursor when returning from programs tmux
+precmd() {
+    if [[ -n $TMUX ]] && [[ $ZLE_STATE == *insert* || -z $ZLE_STATE ]]; then
+        printf '\033[5 q'  # beam cursor
+    fi
+}
+
+# Also reset when changing directories or after commands tmux
+chpwd() {
+    if [[ -n $TMUX ]]; then
+        printf '\033[5 q'  # beam cursor
+    fi
+}
