@@ -3,9 +3,14 @@
 WP1="$HOME/.config/backgrounds/wallhaven-1.png"
 WP3="$HOME/.config/backgrounds/wallhaven-3.png"
 
+current_wp=""
+
 set_wallpaper() {
     local wp=$1
-    hyprctl hyprpaper wallpaper ",$wp"
+    if [[ "$current_wp" != "$wp" ]]; then
+        hyprctl hyprpaper wallpaper ",$wp"
+        current_wp="$wp"
+    fi
 }
 
 socat - UNIX-CONNECT:"$XDG_RUNTIME_DIR"/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock | \
