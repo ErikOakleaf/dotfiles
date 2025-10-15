@@ -57,29 +57,26 @@ return {
         "neovim/nvim-lspconfig",
         config = function()
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
-            local lspconfig = require("lspconfig")
-            lspconfig.clangd.setup({
-                capabilities = capabilities,
-            })
-            lspconfig.zls.setup({
-                capabilities = capabilities
-            })
-            lspconfig.ts_ls.setup({
-                capabilities = capabilities
-            })
-            lspconfig.html.setup({
-                capabilites = capabilites
-            })
-            lspconfig.cssls.setup({
-                capabilites = capabilites
-            })
-            lspconfig.pyright.setup({
-                capabilites = capabilites
-            })
-            lspconfig.lua_ls.setup({
-                capabilites = capabilites
-            })
+            vim.lsp.config.clangd = { capabilities = capabilities }
+            vim.lsp.enable('clangd')
 
+            vim.lsp.config.zls = { capabilities = capabilities }
+            vim.lsp.enable('zls')
+
+            vim.lsp.config.ts_ls = { capabilities = capabilities }
+            vim.lsp.enable('ts_ls')
+
+            vim.lsp.config.html = { capabilities = capabilities }
+            vim.lsp.enable('html')
+
+            vim.lsp.config.cssls = { capabilities = capabilities }
+            vim.lsp.enable('cssls')
+
+            vim.lsp.config.pyright = { capabilities = capabilities }
+            vim.lsp.enable('pyright')
+
+            vim.lsp.config.lua_ls = { capabilities = capabilities }
+            vim.lsp.enable('lua_ls')
 
             -- keymaps
             vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
