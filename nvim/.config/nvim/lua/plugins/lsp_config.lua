@@ -18,6 +18,7 @@ return {
                     "cssls",
                     "pyright",
                     "lua_ls",
+                    "omnisharp"
                 },
             })
         end,
@@ -77,6 +78,12 @@ return {
 
             vim.lsp.config.lua_ls = { capabilities = capabilities }
             vim.lsp.enable('lua_ls')
+
+            vim.lsp.config.lua_ls = { capabilities = capabilities }
+            vim.lsp.enable('lua_ls')
+
+            vim.lsp.config.omnisharp = { capabilities = capabilities }
+            vim.lsp.enable('omnisharp')
 
             -- keymaps
             vim.keymap.set("n", "<leader>h", vim.lsp.buf.hover, {})
