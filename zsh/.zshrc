@@ -84,3 +84,9 @@ chpwd() {
         printf '\033[5 q'  # beam cursor
     fi
 }
+
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
+source /usr/share/nvm/init-nvm.sh
+export PATH="$PATH:$HOME/.dotnet/tools"
