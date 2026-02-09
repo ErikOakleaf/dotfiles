@@ -12,6 +12,4 @@ else
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 fi
 
-pkill -f "workspace-wallpaper.sh"
-sleep 0.5
-~/.config/hypr/scripts/workspace-wallpaper.sh &
+pkill -USR1 -f "workspace-wallpaper.sh"

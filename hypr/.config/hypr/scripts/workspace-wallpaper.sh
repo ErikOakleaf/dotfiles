@@ -21,11 +21,6 @@ get_wallpapers() {
     fi
 }
 
-# Initialize wallpapers
-get_wallpapers
-
-current_wp=""
-
 set_wallpaper() {
     local wp=$1
     if [[ "$current_wp" != "$wp" ]]; then
@@ -35,7 +30,26 @@ set_wallpaper() {
     fi
 }
 
-# Set initial wallpaper based on current workspace
+# Switch between dark mode and bright mode reads a signal and switches the wallpapers
+trap '
+echo "Reloading wallpapers..." >> "$LOG_FILE"
+get_wallpapers
+# Detect current workspace
+ws=$(hyprctl activeworkspace -j | jq -r ".id")
+if [[ "$ws" == "1" || "$ws" == "2" ]]; then
+    set_wallpaper "$WP1"
+else
+    set_wallpaper "$WP3"
+fi
+' USR1
+
+# Initialize wallpapers
+get_wallpapers
+
+current_wp=""
+
+
+# Set initial wallpaper based on current workspace for when the script is started
 ws=$(hyprctl activeworkspace -j | jq -r '.id')
 echo "Initial workspace: $ws" >> "$LOG_FILE"
 
@@ -45,23 +59,31 @@ else
     set_wallpaper "$WP3"
 fi
 
+# Start listening to events and switch wallpaper on workspace change
 echo "Starting socat listener..." >> "$LOG_FILE"
 
-# Listen for workspace changes
-socat - UNIX-CONNECT:"$XDG_RUNTIME_DIR"/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock 2>> "$LOG_FILE" | \
-while read -r event; do
-    echo "Event received: $event" >> "$LOG_FILE"
-    
-    if [[ "$event" =~ "workspace" ]]; then
-        ws=$(hyprctl activeworkspace -j | jq -r '.id')
-        echo "Workspace changed to: $ws" >> "$LOG_FILE"
-        
-        if [[ "$ws" == "1" || "$ws" == "2" ]]; then
-            set_wallpaper "$WP1"
-        else
-            set_wallpaper "$WP3"
+while true; do
+    echo "Connecting to Hyprland socket..." >> "$LOG_FILE"
+
+    while read -r event; do
+        echo "Event received: $event" >> "$LOG_FILE"
+
+        if [[ "$event" == workspace* ]]; then
+            ws=$(hyprctl activeworkspace -j | jq -r '.id')
+            echo "Workspace changed to: $ws" >> "$LOG_FILE"
+
+            if [[ "$ws" == "1" || "$ws" == "2" ]]; then
+                set_wallpaper "$WP1"
+            else
+                set_wallpaper "$WP3"
+            fi
         fi
-    fi
+    done < <(
+        socat - UNIX-CONNECT:"$XDG_RUNTIME_DIR"/hypr/"$HYPRLAND_INSTANCE_SIGNATURE"/.socket2.sock 2>> "$LOG_FILE"
+    )
+
+    echo "Socket disconnected, retrying in 1s..." >> "$LOG_FILE"
+    sleep 1
 done
 
 echo "!!! Script exited at $(date) !!!" >> "$LOG_FILE"
