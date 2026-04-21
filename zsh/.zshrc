@@ -38,6 +38,7 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # Aliases
 alias ls='ls --color'
+alias vim='nvim'
 
 # Shell integrations
 eval "$(zoxide init --cmd cd zsh)"
@@ -84,11 +85,6 @@ chpwd() {
         printf '\033[5 q'  # beam cursor
     fi
 }
-
-
-# Load Angular CLI autocompletion.
-source <(ng completion script)
-source /usr/share/nvm/init-nvm.sh
 
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$HOME/.dotnet/tools"
