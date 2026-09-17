@@ -46,34 +46,16 @@ local function apply_monitor_config(external_name)
 end
 
 local function detect_and_apply()
-    local monitors = hl.get_monitors()  -- returns list of HL.Monitor objects
-    local external = nil
-    for _, mon in ipairs(monitors) do
-        if mon.name ~= LAPTOP then
-            external = mon.name
-            break
-        end
-    end
-    apply_monitor_config(external)  -- nil if none found = laptop only
-end
-
-hl.on("monitor.added", function(mon)
-    if mon.name ~= LAPTOP then
-        apply_monitor_config(mon.name)
-    end
-end)
-
-hl.on("monitor.removed", function(mon)
-	if mon.name ~= LAPTOP then
-	    apply_monitor_config(nil)
+	local monitors = hl.get_monitors() -- returns list of HL.Monitor objects
+	local external = nil
+	for _, mon in ipairs(monitors) do
+		if mon.name ~= LAPTOP then
+			external = mon.name
+			break
+		end
 	end
-end)
-
--- hl.bind("switch:on:Lid Switch",
---     hl.dsp.exec_cmd("bash ~/.config/hypr/scripts/lid-close.sh"),
---     { locked = true }
--- )
---
+	apply_monitor_config(external) -- nil if none found = laptop only
+end
 
 detect_and_apply()
 
@@ -100,7 +82,6 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("mako")
 	hl.exec_cmd("~/.config/hypr/scripts/workspace-wallpaper.sh")
-	hl.exec_cmd("~/.config/hypr/scripts/monitors.sh")
 end)
 
 -------------------------------
@@ -269,7 +250,7 @@ hl.config({
 hl.config({
 	input = {
 		kb_layout = "us",
-		kb_variant = "",
+		kb_variant = "altgr-intl",
 		kb_model = "",
 		kb_options = "",
 		kb_rules = "",
@@ -303,9 +284,6 @@ hl.device({
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
--- TODO remove this watch here
-hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("bash ~/.config/hypr/scripts/monitors.sh"))
-
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + W", hl.dsp.window.close())
@@ -335,6 +313,10 @@ hl.bind(mainMod .. " + right", hl.dsp.window.resize({ x = 50, y = 0 }))
 hl.bind(mainMod .. " + up", hl.dsp.window.resize({ x = 0, y = -50 }))
 hl.bind(mainMod .. " + down", hl.dsp.window.resize({ x = 0, y = 50 }))
 
+-- Switch from external and laptop monitor
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("~/.config/hypr/scripts/monitor-external.sh"))
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("~/.config/hypr/scripts/monitor-laptop.sh"))
+
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
@@ -354,6 +336,12 @@ hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- Notify current time
+hl.bind(
+	mainMod .. " + T",
+	hl.dsp.exec_cmd("notify-send -t 1000 -h string:x-canonical-private-synchronous:clock \"$(date '+%H:%M')\"")
+)
 
 -- Laptop multimedia keys for volume and LCD brightness
 hl.bind(
@@ -385,19 +373,21 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
+-- hl.dsp.workspace.move
+
 -- toggle waybar
 local function toggle_waybar()
-    local handle = io.popen("pgrep -x waybar")
-    local result = handle:read("*a")
-    handle:close()
+	local handle = io.popen("pgrep -x waybar")
+	local result = handle:read("*a")
+	handle:close()
 
-    if result ~= "" then
-        hl.exec_cmd("pkill waybar")
-        hl.config({ general = { gaps_out = 20 } })
-    else
-        hl.exec_cmd("waybar")
-        hl.config({ general = { gaps_out = { top = 5, right = 20, bottom = 20, left = 20 } } })
-    end
+	if result ~= "" then
+		hl.exec_cmd("pkill waybar")
+		hl.config({ general = { gaps_out = 20 } })
+	else
+		hl.exec_cmd("waybar")
+		hl.config({ general = { gaps_out = { top = 5, right = 20, bottom = 20, left = 20 } } })
+	end
 end
 
 hl.bind(mainMod .. " + grave", toggle_waybar)

@@ -25,7 +25,7 @@
     "hyprland/workspaces": {
         "all-outputs": true,
         "disable-scroll": true,
-
+        "on-click": "activate",
         "format": "{name} : {icon}",
         "format-icons": {
             "1": "",
@@ -90,7 +90,8 @@
         "format-ethernet": "{ipaddr}/{cidr} ",
         "tooltip-format": "{ifname} via {gwaddr} ",
         "format-linked": "{ifname} (No IP) ",
-        "format-disconnected": "Disconnected ⚠"
+        "format-disconnected": "Disconnected ⚠",
+        "on-click": "iwgtk"
     },
 
     "clock": {

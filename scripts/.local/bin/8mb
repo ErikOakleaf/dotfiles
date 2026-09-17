@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+TARGET_BYTES=8000000
+TARGET_MB=7.85
+AUDIO_KBPS=64
+MIN_VIDEO_KBPS=16
+MAX_ATTEMPTS=3
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: 8mb <video>"
+    exit 1
+fi
+
+INPUT="$1"
+
+if [[ ! -f "$INPUT" ]]; then
+    echo "Error: file not found: $INPUT"
+    exit 1
+fi
+
+if ! command -v ffmpeg >/dev/null 2>&1; then
+    echo "Error: ffmpeg is not installed."
+    exit 1
+fi
+
+if ! command -v ffprobe >/dev/null 2>&1; then
+    echo "Error: ffprobe is not installed."
+    exit 1
+fi
+
+# Get duration in seconds.
+DURATION=$(ffprobe \
+    -v error \
+    -show_entries format=duration \
+    -of default=noprint_wrappers=1:nokey=1 \
+    "$INPUT")
+
+if [[ -z "$DURATION" || "$DURATION" == "N/A" ]]; then
+    echo "Error: could not determine video duration."
+    exit 1
+fi
+
+BASENAME="$(basename "$INPUT")"
+NAME="${BASENAME%.*}"
+OUTPUT="$(pwd)/${NAME}.8mb.mp4"
+
+TMPDIR=$(mktemp -d)
+trap 'rm -rf "$TMPDIR"' EXIT
+
+TARGET_BITS=$(awk "BEGIN { printf \"%.0f\", $TARGET_MB * 1000000 * 8 }")
+
+VIDEO_KBPS=$(awk \
+    -v bits="$TARGET_BITS" \
+    -v duration="$DURATION" \
+    -v audio="$AUDIO_KBPS" \
+    'BEGIN {
+        bitrate = (bits / duration / 1000) - audio;
+        if (bitrate < 16) bitrate = 16;
+        printf "%.0f", bitrate;
+    }')
+
+echo "Input:    $INPUT"
+echo "Duration: ${DURATION}s"
+echo "Target:   ~8 MB"
+echo "Output:   $OUTPUT"
+echo "Video:    ${VIDEO_KBPS} kbps"
+echo "Audio:    ${AUDIO_KBPS} kbps"
+echo
+
+for ((attempt=1; attempt<=MAX_ATTEMPTS; attempt++)); do
+
+    echo "Encoding (attempt $attempt/$MAX_ATTEMPTS)..."
+
+    rm -f "$TMPDIR"/ffmpeg2pass*
+
+    # Pass 1
+    ffmpeg -hide_banner -loglevel error \
+        -y \
+        -i "$INPUT" \
+        -c:v libx264 \
+        -preset medium \
+        -b:v "${VIDEO_KBPS}k" \
+        -pass 1 \
+        -passlogfile "$TMPDIR/passlog" \
+        -an \
+        -f null /dev/null
+
+    # Pass 2
+    ffmpeg -hide_banner \
+        -y \
+        -i "$INPUT" \
+        -c:v libx264 \
+        -preset medium \
+        -b:v "${VIDEO_KBPS}k" \
+        -pass 2 \
+        -passlogfile "$TMPDIR/passlog" \
+        -c:a aac \
+        -b:a "${AUDIO_KBPS}k" \
+        -movflags +faststart \
+        "$OUTPUT"
+
+    SIZE=$(stat -c%s "$OUTPUT" 2>/dev/null || stat -f%z "$OUTPUT")
+    SIZE_MB=$(awk -v size="$SIZE" 'BEGIN { printf "%.2f", size / 1000000 }')
+
+    echo "Result: ${SIZE_MB} MB"
+
+    if (( SIZE <= TARGET_BYTES )); then
+        echo
+        echo "Done: $OUTPUT"
+        exit 0
+    fi
+
+    # If over 8 MB, reduce the bitrate proportionally and try again.
+    VIDEO_KBPS=$(awk \
+        -v bitrate="$VIDEO_KBPS" \
+        -v target="$TARGET_BYTES" \
+        -v actual="$SIZE" \
+        'BEGIN {
+            newrate = bitrate * target / actual * 0.97;
+            if (newrate < 16) newrate = 16;
+            printf "%.0f", newrate;
+        }')
+
+    echo "File was over 8 MB; reducing video bitrate to ${VIDEO_KBPS} kbps..."
+    echo
+done
+
+echo "Warning: could not get below 8 MB after $MAX_ATTEMPTS attempts."
+echo "Final file: $OUTPUT"
