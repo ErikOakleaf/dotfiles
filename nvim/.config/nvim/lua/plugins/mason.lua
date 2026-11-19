@@ -10,7 +10,7 @@ require("mason-tool-installer").setup({
 		"cssls",
 		"pyright",
 		"lua_ls",
-		"omnisharp",
+		"roslyn-language-server",
 		-- Formatters
 		"prettier",
 		"black",

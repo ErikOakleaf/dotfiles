@@ -2,10 +2,12 @@ local treesitter = require("nvim-treesitter")
 
 treesitter.install({
 	"c",
+	"c_sharp",
 	"lua",
 	"vim",
 	"vimdoc",
 	"markdown",
+	"markdown_inline",
 	"query",
 	"rust",
 	"javascript",
@@ -21,6 +23,7 @@ treesitter.install({
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = {
 		"c",
+		"cs",
 		"lua",
 		"vim",
 		"help",

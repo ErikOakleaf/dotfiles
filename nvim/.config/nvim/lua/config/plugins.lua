@@ -16,6 +16,7 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
 	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
+	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
 
 	-- completions and snippets
 	{ src = "https://github.com/L3MON4D3/LuaSnip", name = "LuaSnip" },

@@ -295,6 +295,9 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + X", hl.dsp.window.pseudo())
 -- hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
+-- Toggle between Swedish (keyd off) and US AltGr International (keyd on).
+hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("~/.config/hypr/scripts/toggle-keyboard-layout.sh"))
+
 -- Move focus with mainMod + vim direction keys
 hl.bind(mainMod .. " + j", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + p", hl.dsp.focus({ direction = "right" }))
